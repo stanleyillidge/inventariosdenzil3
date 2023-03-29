@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inventariosdenzil2/modelos/models.dart';
+import 'package:inventariosdenzil/modelos/models.dart';
 
 class ContadorBar extends StatefulWidget {
   final double offset;

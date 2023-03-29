@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="saeji.dev.inventariosdenzil2">
+    package="saeji.dev.inventariosdenzil">
    <application
-        android:label="inventariosdenzil2"
+        android:label="inventariosdenzil"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:inventariosdenzil2/rutas.dart';
+import 'package:inventariosdenzil/rutas.dart';
 import 'package:responsive_framework/responsive_wrapper.dart';
 
 import 'modelos/models.dart';
