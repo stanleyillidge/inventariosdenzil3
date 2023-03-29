@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "inventariosdenzil",
+            "name": "inventariosdenzil2",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "inventariosdenzil (profile mode)",
+            "name": "inventariosdenzil2 (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "inventariosdenzil (release mode)",
+            "name": "inventariosdenzil2 (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

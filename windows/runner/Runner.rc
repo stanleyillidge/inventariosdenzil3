@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "saeji.dev" "\0"
-            VALUE "FileDescription", "inventariosdenzil" "\0"
+            VALUE "FileDescription", "inventariosdenzil2" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "inventariosdenzil" "\0"
+            VALUE "InternalName", "inventariosdenzil2" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 saeji.dev. All rights reserved." "\0"
-            VALUE "OriginalFilename", "inventariosdenzil.exe" "\0"
-            VALUE "ProductName", "inventariosdenzil" "\0"
+            VALUE "OriginalFilename", "inventariosdenzil2.exe" "\0"
+            VALUE "ProductName", "inventariosdenzil2" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
