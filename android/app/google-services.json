@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "393183873945",
+    "project_id": "inventarios-develop",
+    "storage_bucket": "inventarios-develop.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393183873945:android:f1b9062f2cdf9789bca108",
+        "android_client_info": {
+          "package_name": "saeji.dev.inventariosdenzil"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "393183873945-6s8q05t17v2qjel8dqk0fh52anjgeca8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "saeji.dev.inventariosdenzil",
+            "certificate_hash": "b6a3ee2bb2b6a450f42e032c17efce848b3712fe"
+          }
+        },
+        {
+          "client_id": "393183873945-knd8u3c22ctr46rjmkgfqtsjfj2cftuf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "saeji.dev.inventariosdenzil",
+            "certificate_hash": "a0c189287c57e976e72268270dea76b910c65e2b"
+          }
+        },
+        {
+          "client_id": "393183873945-ru1mi8adm258oh3sbeig6jrv37uhg1ga.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "saeji.dev.inventariosdenzil",
+            "certificate_hash": "3f60afea3fc5f40be5aa1cd2a7225947758f2de8"
+          }
+        },
+        {
+          "client_id": "393183873945-dop5h62t21q34kfe8d25akf0fn4bie1d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3M427i3FinVZLMFko4mdMKIU9gE586ZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "393183873945-dop5h62t21q34kfe8d25akf0fn4bie1d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
