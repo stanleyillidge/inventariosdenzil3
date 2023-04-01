@@ -196,7 +196,7 @@ class Contador extends StatefulWidget {
   final MaterialColor? color;
   final bool isAppBar;
   final int? index;
-  final Locations? location;
+  final Location? location;
   const Contador({
     required this.titulo,
     required this.contador,

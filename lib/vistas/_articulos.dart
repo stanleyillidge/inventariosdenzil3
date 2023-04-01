@@ -55,6 +55,11 @@ class ArticulosPageState extends State<ArticulosPage> {
     isDarkModeEnabled = false;
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void onStateChanged(bool isDarkModeEnabled2) async {
     setState(() {
       isDarkModeEnabled = !isDarkModeEnabled;
@@ -78,7 +83,7 @@ class ArticulosPageState extends State<ArticulosPage> {
         ((articulos != null) ? articulos![0].nombre! : ''),
       ),
       body: Scaffold(
-        key: const Key('ArticulosPageBody'),
+        key: scaffoldArticulosPageBody,
         extendBody: true,
         appBar: AppBar(
           key: const Key('ArticulosPageAppBar'),

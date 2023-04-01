@@ -1,15 +1,11 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, use_build_context_synchronously
 
 import 'dart:math';
-// import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import 'package:flutter_localizations/flutter_localizations.dart';
-// import 'package:flutter_localizations/flutter_localizations.dart';
-// import "package:flutter/services.dart";
 import "package:google_sign_in/google_sign_in.dart";
 import "package:flutter/foundation.dart" show kDebugMode, kIsWeb;
-// import 'package:googleapis/servicemanagement/v1.dart';
 import "dart:io" show Platform;
 import "package:hive/hive.dart";
 import "package:path_provider/path_provider.dart";
@@ -17,10 +13,6 @@ import "package:path_provider/path_provider.dart";
 import "../estilos.dart";
 import "../modelos/models.dart";
 import '_sedes.dart';
-// import 'asignacionView.dart';
-
-// import 'asignacion.dart';
-// import 'asignacionView.dart';
 
 Image? myImage;
 
@@ -171,11 +163,16 @@ class LoginPageState extends State<LoginPage> {
       Hive.init(dir.path);
       // print('Hive Android is ok');
     }
+    sedes = [];
+    ubicaciones = [];
+    subUbicaciones = [];
+    // await mapLocations();
   }
 
   @override
   void initState() {
     super.initState();
+    initializeHive();
     myImage = Image.asset(
       "assets/logos/google.png",
       width: 80,
@@ -299,6 +296,9 @@ class LoginPageState extends State<LoginPage> {
                           // print("Login with Google");
                           bool a = await signInWithGoogle();
                           if (a) {
+                            sedes = [];
+                            ubicaciones = [];
+                            subUbicaciones = [];
                             /* print([
                               'Login antes de SetState',
                               googleUser?.name?.fullName,

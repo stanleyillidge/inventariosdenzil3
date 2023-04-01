@@ -28,7 +28,8 @@ class UbicacionesPageState extends State<UbicacionesPage> {
   final double _locationsCardsWidt = 350;
 
   init() async {
-    ubicaciones = await getLocation(widget.locationCollection);
+    ubicaciones ??= [];
+    ubicaciones!.addAll(await getLocation(widget.locationCollection));
     // await storage.put('sedes', sedes);
     contadorUbicacionesBarkey.currentState!.getContadores(ubicaciones);
     setState(() {
@@ -44,6 +45,11 @@ class UbicacionesPageState extends State<UbicacionesPage> {
     // getSeriales();
     super.initState();
     isDarkModeEnabled = false;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void onStateChanged(bool isDarkModeEnabled2) async {
@@ -63,7 +69,7 @@ class UbicacionesPageState extends State<UbicacionesPage> {
       extendBody: true,
       appBar: appBarInst('Sede ${widget.title}', 0, appBarTitleWidth),
       body: Scaffold(
-        key: const Key('ubicacionesPageBody'),
+        key: scaffoldUbicacionesPageBody,
         extendBody: true,
         appBar: AppBar(
           elevation: 0,

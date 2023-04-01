@@ -54,6 +54,11 @@ class InventarioPageState extends State<InventarioPage> {
     isDarkModeEnabled = false;
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void onStateChanged(bool isDarkModeEnabled2) async {
     setState(() {
       isDarkModeEnabled = !isDarkModeEnabled;
@@ -76,7 +81,7 @@ class InventarioPageState extends State<InventarioPage> {
         subtitulo,
       ),
       body: Scaffold(
-        key: const Key('InventarioPageBody'),
+        key: scaffoldInventarioPageBody,
         extendBody: true,
         appBar: AppBar(
           key: const Key('InventarioPageAppBar'),

@@ -32,7 +32,7 @@ class ViewArticuloPage extends StatefulWidget {
 }
 
 class ViewArticuloPageState extends State<ViewArticuloPage> {
-  final double _locationsCardsWidt = 350;
+  final double _LocationCardsWidt = 350;
   Articulo? articulo;
   String estado = 'Bueno';
   List<String> estados = [
@@ -40,8 +40,12 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
     'Malo',
     'Regular',
   ];
+  // final int _sedei = 0;
+  // final int _ubicacioni = 0;
+  // final int _subUbicacioni = 0;
   String subtitulo = '';
   String titulo = '';
+  bool dataload = false;
 
   init() async {
     articulos = await getArticulos(widget.locationCollection);
@@ -53,6 +57,8 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
 
   @override
   void initState() {
+    dataload = true;
+    // mapLocation().then((value) => dataload = true);
     titulo = 'Sede ${sedes![widget.sedeIndex].nombre}';
     subtitulo =
         '${ubicaciones![widget.ubicacionIndex].nombre} - ${subUbicaciones![widget.subUbicacionIndex].nombre}';
@@ -82,7 +88,7 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    double width = (size.width > _locationsCardsWidt) ? size.width - 15 : _locationsCardsWidt;
+    double width = (size.width > _LocationCardsWidt) ? size.width - 15 : _LocationCardsWidt;
     appBarTitleWidth = (size.width > size.width * 0.7) ? size.width * 0.7 : size.width - 15;
     return Scaffold(
       key: scaffoldViewArticuloPagekey,
@@ -159,7 +165,7 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                             textAlign: TextAlign.center,
                             style: GoogleFonts.lato(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 18,
                               color: Colors.black,
                               decoration: TextDecoration.none,
                             ),
@@ -174,42 +180,45 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                   child: SizedBox(
                     width: width * 0.9,
                     // height: 40,
-                    child: FormField<String>(
-                      builder: (FormFieldState<String> state) {
-                        return InputDecorator(
-                          decoration: InputDecoration(
-                            hintStyle: const TextStyle(color: Colors.black45),
-                            errorStyle: const TextStyle(color: Colors.redAccent),
-                            border: const OutlineInputBorder(),
-                            labelText: 'Sede',
-                            floatingLabelStyle: floatingLabelStyle,
-                            contentPadding: const EdgeInsets.only(left: 20, top: 15, bottom: 0),
-                            isDense: true,
-                          ),
-                          isEmpty: (articulos![widget.articuloIndex].sede!.nombre != null)
-                              ? (articulos![widget.articuloIndex].sede!.nombre == '')
-                              : false,
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: articulos![widget.articuloIndex].sede!.nombre,
-                              isDense: true,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  articulos![widget.articuloIndex].sede!.nombre = newValue;
-                                  // state.didChange(newValue);
-                                });
-                              },
-                              items: sedes!.map((s) => s.nombre).toList().map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                    child: (dataload)
+                        ? FormField<String>(
+                            builder: (FormFieldState<String> state) {
+                              return InputDecorator(
+                                decoration: InputDecoration(
+                                  hintStyle: const TextStyle(color: Colors.black45),
+                                  errorStyle: const TextStyle(color: Colors.redAccent),
+                                  border: const OutlineInputBorder(),
+                                  labelText: 'Sede',
+                                  floatingLabelStyle: floatingLabelStyle,
+                                  contentPadding:
+                                      const EdgeInsets.only(left: 20, top: 15, bottom: 0),
+                                  isDense: true,
+                                ),
+                                isEmpty: (articulos![widget.articuloIndex].sede!.nombre != null)
+                                    ? (articulos![widget.articuloIndex].sede!.nombre == '')
+                                    : false,
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    value: articulos![widget.articuloIndex].sede!.nombre,
+                                    isDense: true,
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        articulos![widget.articuloIndex].sede!.nombre = newValue;
+                                        // state.didChange(newValue);
+                                      });
+                                    },
+                                    items: sedes!.map((s) => s.nombre).toList().map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : const LinearProgressIndicator(),
                   ),
                 ),
                 Padding(
@@ -217,49 +226,57 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                   child: SizedBox(
                     width: width * 0.9,
                     // height: 40,
-                    child: FormField<String>(
-                      builder: (FormFieldState<String> state) {
-                        return InputDecorator(
-                          decoration: InputDecoration(
-                            hintStyle: const TextStyle(color: Colors.black45),
-                            errorStyle: const TextStyle(color: Colors.redAccent),
-                            border: const OutlineInputBorder(),
-                            labelText: 'Ubicacion',
-                            floatingLabelStyle: floatingLabelStyle,
-                            contentPadding: const EdgeInsets.only(left: 20, top: 15, bottom: 0),
-                            isDense: true,
-                          ),
-                          isEmpty: (articulos![widget.articuloIndex].ubicacion!.nombre != null)
-                              ? (articulos![widget.articuloIndex].ubicacion!.nombre == '')
-                              : false,
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: articulos![widget.articuloIndex].ubicacion!.nombre,
-                              isDense: true,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  articulos![widget.articuloIndex].ubicacion!.nombre = newValue;
-                                  // state.didChange(newValue);
-                                });
-                              },
-                              items: ubicaciones!.map((s) => s.nombre).toList().map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: SizedBox(
-                                    width: width * 0.78,
-                                    child: Text(
-                                      value,
-                                      softWrap: true,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                    child: (dataload)
+                        ? FormField<String>(
+                            builder: (FormFieldState<String> state) {
+                              return InputDecorator(
+                                decoration: InputDecoration(
+                                  hintStyle: const TextStyle(color: Colors.black45),
+                                  errorStyle: const TextStyle(color: Colors.redAccent),
+                                  border: const OutlineInputBorder(),
+                                  labelText: 'Ubicacion',
+                                  floatingLabelStyle: floatingLabelStyle,
+                                  contentPadding:
+                                      const EdgeInsets.only(left: 20, top: 15, bottom: 0),
+                                  isDense: true,
+                                ),
+                                isEmpty:
+                                    (articulos![widget.articuloIndex].ubicacion!.nombre != null)
+                                        ? (articulos![widget.articuloIndex].ubicacion!.nombre == '')
+                                        : false,
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    value: articulos![widget.articuloIndex].ubicacion!.nombre,
+                                    isDense: true,
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        articulos![widget.articuloIndex].ubicacion!.nombre =
+                                            newValue;
+                                        // state.didChange(newValue);
+                                      });
+                                    },
+                                    items: ubicaciones!
+                                        .map((s) => s.nombre)
+                                        .toList()
+                                        .map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: SizedBox(
+                                          width: width * 0.78,
+                                          child: Text(
+                                            value,
+                                            softWrap: true,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
                                   ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                                ),
+                              );
+                            },
+                          )
+                        : const LinearProgressIndicator(),
                   ),
                 ),
                 Padding(
@@ -267,50 +284,57 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                   child: SizedBox(
                     width: width * 0.9,
                     // height: 40,
-                    child: FormField<String>(
-                      builder: (FormFieldState<String> state) {
-                        return InputDecorator(
-                          decoration: InputDecoration(
-                            hintStyle: const TextStyle(color: Colors.black45),
-                            errorStyle: const TextStyle(color: Colors.redAccent),
-                            border: const OutlineInputBorder(),
-                            labelText: 'SubUbicacion',
-                            floatingLabelStyle: floatingLabelStyle,
-                            contentPadding: const EdgeInsets.only(left: 20, top: 15, bottom: 0),
-                            isDense: true,
-                          ),
-                          isEmpty: (articulos![widget.articuloIndex].subUbicacion!.nombre != null)
-                              ? (articulos![widget.articuloIndex].subUbicacion!.nombre == '')
-                              : false,
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: articulos![widget.articuloIndex].subUbicacion!.nombre,
-                              isDense: true,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  articulos![widget.articuloIndex].subUbicacion!.nombre = newValue;
-                                  // state.didChange(newValue);
-                                });
-                              },
-                              items:
-                                  subUbicaciones!.map((s) => s.nombre).toList().map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: SizedBox(
-                                    width: width * 0.78,
-                                    child: Text(
-                                      value,
-                                      softWrap: true,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                    child: (dataload)
+                        ? FormField<String>(
+                            builder: (FormFieldState<String> state) {
+                              return InputDecorator(
+                                decoration: InputDecoration(
+                                  hintStyle: const TextStyle(color: Colors.black45),
+                                  errorStyle: const TextStyle(color: Colors.redAccent),
+                                  border: const OutlineInputBorder(),
+                                  labelText: 'SubUbicacion',
+                                  floatingLabelStyle: floatingLabelStyle,
+                                  contentPadding:
+                                      const EdgeInsets.only(left: 20, top: 15, bottom: 0),
+                                  isDense: true,
+                                ),
+                                isEmpty: (articulos![widget.articuloIndex].subUbicacion!.nombre !=
+                                        null)
+                                    ? (articulos![widget.articuloIndex].subUbicacion!.nombre == '')
+                                    : false,
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    value: articulos![widget.articuloIndex].subUbicacion!.nombre,
+                                    isDense: true,
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        articulos![widget.articuloIndex].subUbicacion!.nombre =
+                                            newValue;
+                                        // state.didChange(newValue);
+                                      });
+                                    },
+                                    items: subUbicaciones!
+                                        .map((s) => s.nombre)
+                                        .toList()
+                                        .map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: SizedBox(
+                                          width: width * 0.78,
+                                          child: Text(
+                                            value,
+                                            softWrap: true,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
                                   ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                                ),
+                              );
+                            },
+                          )
+                        : const LinearProgressIndicator(),
                   ),
                 ),
                 Padding(

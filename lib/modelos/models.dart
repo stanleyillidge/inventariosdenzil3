@@ -18,11 +18,22 @@ DateTime inicio_ano_lectivo = DateFormat('dd/MM/yyyy', 'es').parse('06/02/2023')
 String institucionEducativa = "Institución Educativa Denzil Escolar";
 
 final GlobalKey<ScaffoldState> scaffoldSedesPagekey = GlobalKey();
+final GlobalKey<ScaffoldState> scaffoldSedesPageBody = GlobalKey();
+
 final GlobalKey<ScaffoldState> scaffoldUbicacionesPagekey = GlobalKey();
+final GlobalKey<ScaffoldState> scaffoldUbicacionesPageBody = GlobalKey();
+
 final GlobalKey<ScaffoldState> scaffoldSubUbicacionesPagekey = GlobalKey();
+final GlobalKey<ScaffoldState> scaffoldSubUbicacionesPageBody = GlobalKey();
+
 final GlobalKey<ScaffoldState> scaffoldInventarioPagekey = GlobalKey();
+final GlobalKey<ScaffoldState> scaffoldInventarioPageBody = GlobalKey();
+
 final GlobalKey<ScaffoldState> scaffoldArticulosPagekey = GlobalKey();
+final GlobalKey<ScaffoldState> scaffoldArticulosPageBody = GlobalKey();
+
 final GlobalKey<ScaffoldState> scaffoldViewArticuloPagekey = GlobalKey();
+final GlobalKey<ScaffoldState> scaffoldViewArticuloPageBody = GlobalKey();
 
 final GlobalKey<ContadorBarState> contadorSedesBarkey = GlobalKey();
 final GlobalKey<ContadorBarState> contadorUbicacionesBarkey = GlobalKey();
@@ -32,22 +43,22 @@ final GlobalKey<ContadorBarState> contadorArticulosBarkey = GlobalKey();
 final GlobalKey<ContadorBarState> contadorViewArticuloBarkey = GlobalKey();
 
 bool isDarkModeEnabled = false;
-bool login = false;
+bool? login = false;
 bool isDataLoad = true;
 
 double appBarTitleWidth = 300;
 
-List<Locations>? locations;
-List<Locations>? sedes;
-List<Locations>? ubicaciones;
-List<Locations>? subUbicaciones;
-List<Locations>? inventario;
+List<Location>? locations;
+List<Location>? sedes;
+List<Location>? ubicaciones;
+List<Location>? subUbicaciones;
+List<Location>? inventario;
 List<Articulo>? articulos;
 
-dynamic storage;
+var storage;
 PackageInfo? packageInfo;
-dynamic loginState;
-dynamic accessToken;
+var loginState;
+var accessToken;
 GoogleUser? googleUser;
 dynamic googleAuthStorage;
 GoogleSignInAuthentication? googleAuth;
@@ -484,7 +495,7 @@ class CustomBottomNavigationItem {
   }
 }
 
-class Locations {
+class Location {
   late String location;
   Referencia? sede;
   Referencia? ubicacion;
@@ -501,7 +512,7 @@ class Locations {
   late int regulares;
   late String error;
 
-  Locations({
+  Location({
     required this.location,
     required this.sede,
     required this.ubicacion,
@@ -518,7 +529,7 @@ class Locations {
     required this.regulares,
   });
 
-  Locations.fromFirebase(Map<dynamic, dynamic> json) {
+  Location.fromFirebase(Map<dynamic, dynamic> json) {
     location = getLocationst(json, 'location');
     sede = getLocationst(json, 'sede');
     ubicacion = getLocationst(json, 'ubicacion');
@@ -546,7 +557,7 @@ class Locations {
             ? json['Regular']
             : 0;
   }
-  Locations.fromHive(Map<dynamic, dynamic> json) {
+  Location.fromHive(Map<dynamic, dynamic> json) {
     location = getLocationst(json, 'location');
     sede = getLocationst(json, 'sede');
     ubicacion = getLocationst(json, 'ubicacion');
@@ -574,8 +585,8 @@ class Locations {
             ? json['Regular']
             : 0;
   }
-  factory Locations.fromLocal(Map<dynamic, dynamic> json) {
-    return Locations(
+  factory Location.fromLocal(Map<dynamic, dynamic> json) {
+    return Location(
       location: json['location'],
       sede: (json['sede'] != null)
           ? Referencia(key: json['sede']['key'], nombre: json['sede']['nombre'])
@@ -946,6 +957,11 @@ class Resumen {
         'malos': malos,
         'regulares': regulares,
       };
+}
+
+class Locations {
+  Location? location;
+  List<Location>? locations;
 }
 
 extension StringExtension on String {

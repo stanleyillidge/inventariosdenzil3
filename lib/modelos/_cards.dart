@@ -6,7 +6,7 @@ import 'models.dart';
 
 class LocationCard extends StatelessWidget {
   final double width;
-  final List<Locations> locations;
+  final List<Location> locations;
   final int index;
   final Function() onTap;
   const LocationCard({
@@ -102,7 +102,7 @@ class LocationCard extends StatelessWidget {
                 key: Key(locations[index].location + index.toString()),
                 locations: locations,
                 background: Colors.white,
-                widthT: width * 0.75,
+                widthT: width * 0.85,
                 offset: 0,
                 isAppBar: false,
                 index: index,

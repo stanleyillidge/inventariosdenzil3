@@ -31,6 +31,7 @@ class SubUbicacionesPageState extends State<SubUbicacionesPage> {
   String subtitulo = '';
 
   init() async {
+    subUbicaciones ??= [];
     subUbicaciones = await getLocation(widget.locationCollection);
     // await storage.put('sedes', sedes);
     contadorSubUbicacionesBarkey.currentState!.getContadores(subUbicaciones);
@@ -48,6 +49,11 @@ class SubUbicacionesPageState extends State<SubUbicacionesPage> {
     // getSeriales();
     super.initState();
     isDarkModeEnabled = false;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void onStateChanged(bool isDarkModeEnabled2) async {
@@ -72,7 +78,7 @@ class SubUbicacionesPageState extends State<SubUbicacionesPage> {
         widget.title,
       ),
       body: Scaffold(
-        key: const Key('subUbicacionesPageBody'),
+        key: scaffoldSubUbicacionesPageBody,
         extendBody: true,
         appBar: AppBar(
           elevation: 0,

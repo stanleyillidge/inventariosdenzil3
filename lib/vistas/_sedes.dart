@@ -22,22 +22,32 @@ class SedesPageState extends State<SedesPage> {
   final double _locationsCardsWidt = 350;
 
   init() async {
-    sedes = await getLocation(sedesCollection);
-    // await storage.put('sedes', sedes);
-    contadorSedesBarkey.currentState!.getContadores(sedes);
+    // sedes = [];
+    // ubicaciones = [];
+    // subUbicaciones = [];
+    sedes ??= [];
+    sedes!.addAll(await getLocation(sedesCollection));
     setState(() {
       sedes = sedes;
       isDataLoad = true;
     });
+    // await storage.put('sedes', sedes);
+    contadorSedesBarkey.currentState!.getContadores(sedes);
+    // await mapLocations();
   }
 
   @override
   void initState() {
     isDataLoad = false;
-    init();
     // getSeriales();
     super.initState();
+    init();
     isDarkModeEnabled = false;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void onStateChanged(bool isDarkModeEnabled2) async {
@@ -57,7 +67,7 @@ class SedesPageState extends State<SedesPage> {
       extendBody: true,
       appBar: appBarInst('Inventario general', 15, appBarTitleWidth),
       body: Scaffold(
-        key: const Key('sedesPageBody'),
+        key: scaffoldSedesPageBody,
         extendBody: true,
         appBar: AppBar(
           elevation: 0,
