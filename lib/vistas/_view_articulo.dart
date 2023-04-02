@@ -41,7 +41,9 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
     'Regular',
   ];
   String _sedekey = '';
+  String _sede = '';
   String _ubicacionkey = '';
+  String _ubicacion = '';
   List<Location>? _subUbicaciones = [];
   String _subUbicacion = '';
   String subtitulo = '';
@@ -68,6 +70,8 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
       articulo = articulos![widget.articuloIndex];
       estado = articulos![widget.articuloIndex].estado!;
       _sedekey = articulos![widget.articuloIndex].sede!.key!;
+      _sede = articulos![widget.articuloIndex].sede!.nombre!;
+      _ubicacion = articulos![widget.articuloIndex].ubicacion!.nombre!;
       _subUbicaciones = subUbicaciones;
       _subUbicacion = articulos![widget.articuloIndex].subUbicacion!.nombre!;
     });
@@ -209,7 +213,8 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                                       setState(() {
                                         _sedekey =
                                             sedes!.where((s) => s.nombre == newValue).first.key;
-                                        articulos![widget.articuloIndex].sede!.nombre = newValue;
+                                        _sede = newValue!;
+                                        // articulos![widget.articuloIndex].sede!.nombre = newValue;
                                         // state.didChange(newValue);
                                       });
                                     },
@@ -246,17 +251,13 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                                       const EdgeInsets.only(left: 20, top: 15, bottom: 0),
                                   isDense: true,
                                 ),
-                                isEmpty:
-                                    (articulos![widget.articuloIndex].ubicacion!.nombre != null)
-                                        ? (articulos![widget.articuloIndex].ubicacion!.nombre == '')
-                                        : false,
+                                isEmpty: (_ubicacion == '') ? true : false,
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton<String>(
-                                    value: articulos![widget.articuloIndex].ubicacion!.nombre,
+                                    value: _ubicacion,
                                     isDense: true,
                                     onChanged: (newValue) async {
                                       _subUbicaciones!.clear();
-                                      _subUbicaciones = [];
                                       _subUbicacion = '';
                                       var collection = FirebaseFirestore.instance
                                           .collection('sedes')
@@ -277,7 +278,12 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                                             .doc(_ubicacionkey)
                                             .collection('subUbicaciones');
                                         _subUbicaciones = await getLocation(collection2);
-                                        _subUbicacion = _subUbicaciones![0].nombre;
+                                        if (kDebugMode) {
+                                          print(['Nuevas ubicaciones', _subUbicaciones!.length]);
+                                        }
+                                        if (_subUbicaciones!.isNotEmpty) {
+                                          _subUbicacion = _subUbicaciones![0].nombre;
+                                        }
                                         if (kDebugMode) {
                                           print(
                                               ['Nuevas _subUbicaciones', _subUbicaciones!.length]);
@@ -286,8 +292,15 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                                       setState(() {
                                         _subUbicaciones = _subUbicaciones;
                                         _subUbicacion = _subUbicacion;
-                                        articulos![widget.articuloIndex].ubicacion!.nombre =
-                                            newValue;
+                                        _ubicacion = newValue!;
+                                        if (newValue ==
+                                            articulos![widget.articuloIndex].ubicacion!.nombre) {
+                                          _subUbicacion = articulos![widget.articuloIndex]
+                                              .subUbicacion!
+                                              .nombre!;
+                                        }
+                                        // articulos![widget.articuloIndex].ubicacion!.nombre =
+                                        //     newValue;
                                         // state.didChange(newValue);
                                       });
                                     },
@@ -315,6 +328,7 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                         : const LinearProgressIndicator(),
                   ),
                 ),
+                // (_subUbicaciones!.isNotEmpty)?
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: SizedBox(
@@ -342,8 +356,9 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                                     onChanged: (newValue) async {
                                       setState(() {
                                         _subUbicacion = newValue!;
-                                        articulos![widget.articuloIndex].subUbicacion!.nombre =
-                                            newValue;
+                                        // articulos![widget.articuloIndex]
+                                        //     .subUbicacion!
+                                        //     .nombre = newValue;
                                       });
                                     },
                                     items: _subUbicaciones!
@@ -370,6 +385,7 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                         : const LinearProgressIndicator(),
                   ),
                 ),
+                // : const SizedBox(),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: SizedBox(
