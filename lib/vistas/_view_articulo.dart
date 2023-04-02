@@ -40,9 +40,10 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
     'Malo',
     'Regular',
   ];
-  // final int _sedei = 0;
-  // final int _ubicacioni = 0;
-  // final int _subUbicacioni = 0;
+  String _sedekey = '';
+  String _ubicacionkey = '';
+  List<Location>? _subUbicaciones = [];
+  String _subUbicacion = '';
   String subtitulo = '';
   String titulo = '';
   bool dataload = false;
@@ -66,6 +67,9 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
     setState(() {
       articulo = articulos![widget.articuloIndex];
       estado = articulos![widget.articuloIndex].estado!;
+      _sedekey = articulos![widget.articuloIndex].sede!.key!;
+      _subUbicaciones = subUbicaciones;
+      _subUbicacion = articulos![widget.articuloIndex].subUbicacion!.nombre!;
     });
     init();
     // getSeriales();
@@ -203,6 +207,8 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                                     isDense: true,
                                     onChanged: (newValue) {
                                       setState(() {
+                                        _sedekey =
+                                            sedes!.where((s) => s.nombre == newValue).first.key;
                                         articulos![widget.articuloIndex].sede!.nombre = newValue;
                                         // state.didChange(newValue);
                                       });
@@ -248,8 +254,38 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                                   child: DropdownButton<String>(
                                     value: articulos![widget.articuloIndex].ubicacion!.nombre,
                                     isDense: true,
-                                    onChanged: (newValue) {
+                                    onChanged: (newValue) async {
+                                      _subUbicaciones!.clear();
+                                      _subUbicaciones = [];
+                                      _subUbicacion = '';
+                                      var collection = FirebaseFirestore.instance
+                                          .collection('sedes')
+                                          .doc(_sedekey)
+                                          .collection('ubicaciones');
+                                      List<Location>? ubicaciones = await getLocation(collection);
+                                      var u =
+                                          ubicaciones.where((s) => s.nombre == newValue).toList();
+                                      if (kDebugMode) {
+                                        print(['Nuevas ubicaciones', ubicaciones.length, u.length]);
+                                      }
+                                      if (u.isNotEmpty) {
+                                        _ubicacionkey = u[0].key;
+                                        var collection2 = FirebaseFirestore.instance
+                                            .collection('sedes')
+                                            .doc(_sedekey)
+                                            .collection('ubicaciones')
+                                            .doc(_ubicacionkey)
+                                            .collection('subUbicaciones');
+                                        _subUbicaciones = await getLocation(collection2);
+                                        _subUbicacion = _subUbicaciones![0].nombre;
+                                        if (kDebugMode) {
+                                          print(
+                                              ['Nuevas _subUbicaciones', _subUbicaciones!.length]);
+                                        }
+                                      }
                                       setState(() {
+                                        _subUbicaciones = _subUbicaciones;
+                                        _subUbicacion = _subUbicacion;
                                         articulos![widget.articuloIndex].ubicacion!.nombre =
                                             newValue;
                                         // state.didChange(newValue);
@@ -298,22 +334,19 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                                       const EdgeInsets.only(left: 20, top: 15, bottom: 0),
                                   isDense: true,
                                 ),
-                                isEmpty: (articulos![widget.articuloIndex].subUbicacion!.nombre !=
-                                        null)
-                                    ? (articulos![widget.articuloIndex].subUbicacion!.nombre == '')
-                                    : false,
+                                isEmpty: (_subUbicacion == '') ? true : false,
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton<String>(
-                                    value: articulos![widget.articuloIndex].subUbicacion!.nombre,
+                                    value: _subUbicacion,
                                     isDense: true,
-                                    onChanged: (newValue) {
+                                    onChanged: (newValue) async {
                                       setState(() {
+                                        _subUbicacion = newValue!;
                                         articulos![widget.articuloIndex].subUbicacion!.nombre =
                                             newValue;
-                                        // state.didChange(newValue);
                                       });
                                     },
-                                    items: subUbicaciones!
+                                    items: _subUbicaciones!
                                         .map((s) => s.nombre)
                                         .toList()
                                         .map((String value) {
