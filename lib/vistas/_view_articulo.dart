@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../apis/_firestore.dart';
@@ -44,11 +45,14 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
   String _sede = '';
   String _ubicacionkey = '';
   String _ubicacion = '';
+  List<Location>? _ubicaciones = [];
   List<Location>? _subUbicaciones = [];
   String _subUbicacion = '';
   String subtitulo = '';
   String titulo = '';
   bool dataload = false;
+  XFile? cameraFile;
+  var _image;
 
   init() async {
     articulos = await getArticulos(widget.locationCollection);
@@ -66,14 +70,21 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
     subtitulo =
         '${ubicaciones![widget.ubicacionIndex].nombre} - ${subUbicaciones![widget.subUbicacionIndex].nombre}';
     isDataLoad = false;
+    _ubicaciones!.clear();
+    _subUbicaciones!.clear();
     setState(() {
+      _image = articulos![widget.articuloIndex].imagen;
       articulo = articulos![widget.articuloIndex];
       estado = articulos![widget.articuloIndex].estado!;
       _sedekey = articulos![widget.articuloIndex].sede!.key!;
       _sede = articulos![widget.articuloIndex].sede!.nombre!;
       _ubicacion = articulos![widget.articuloIndex].ubicacion!.nombre!;
-      _subUbicaciones = subUbicaciones;
+      _ubicaciones!.addAll(ubicaciones!);
+      _subUbicaciones!.addAll(subUbicaciones!);
       _subUbicacion = articulos![widget.articuloIndex].subUbicacion!.nombre!;
+      if (kDebugMode) {
+        print(articulo!.toJson());
+      }
     });
     init();
     // getSeriales();
@@ -91,6 +102,101 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
       isDarkModeEnabled = !isDarkModeEnabled;
     });
     // await storage.put('isDark', isDarkModeEnabled);
+  }
+
+  actualiza(String? newValue, String tipo) async {
+    switch (tipo) {
+      case 'sede':
+        var s = sedes!.firstWhere((s) => s.key == _sedekey);
+        if (kDebugMode) {
+          print(['sede', s.toJson()]);
+        }
+        var collection =
+            FirebaseFirestore.instance.collection('sedes').doc(_sedekey).collection('ubicaciones');
+        _ubicaciones = await getLocation(collection);
+        var u = _ubicaciones!.where((s) => s.nombre == newValue).toList();
+        _ubicacionkey = _ubicaciones![0].key;
+        _ubicacion = _ubicaciones![0].nombre;
+        if (kDebugMode) {
+          print(['Nuevas ubicaciones', _ubicaciones!.length]);
+        }
+        if (u.isNotEmpty) {
+          _ubicacionkey = u[0].key;
+          _ubicacion = u[0].nombre;
+        }
+        var collection2 = FirebaseFirestore.instance
+            .collection('sedes')
+            .doc(_sedekey)
+            .collection('ubicaciones')
+            .doc(_ubicacionkey)
+            .collection('subUbicaciones');
+        _subUbicaciones = await getLocation(collection2);
+        if (kDebugMode) {
+          print(['Nuevas ubicaciones', _subUbicaciones!.length]);
+        }
+        if (_subUbicaciones!.isNotEmpty) {
+          _subUbicacion = _subUbicaciones![0].nombre;
+        }
+        if (kDebugMode) {
+          print(['Nuevas _subUbicaciones', _subUbicaciones!.length]);
+        }
+        setState(() {
+          _sede = newValue!;
+          _ubicaciones = _ubicaciones;
+          _ubicacion = _ubicacion;
+          _subUbicaciones = _subUbicaciones;
+          _subUbicacion = _subUbicacion;
+          // articulos![widget.articuloIndex].sede!.nombre = newValue;
+          // state.didChange(newValue);
+        });
+        break;
+      case 'ubicacion':
+        var collection =
+            FirebaseFirestore.instance.collection('sedes').doc(_sedekey).collection('ubicaciones');
+        List<Location>? ubicacionest = await getLocation(collection);
+        var u = ubicacionest.where((s) => s.nombre == newValue).toList();
+        if (kDebugMode) {
+          print(['Nuevas ubicaciones', ubicacionest.length, u.length]);
+        }
+        if (u.isNotEmpty) {
+          _ubicacionkey = u[0].key;
+          var collection2 = FirebaseFirestore.instance
+              .collection('sedes')
+              .doc(_sedekey)
+              .collection('ubicaciones')
+              .doc(_ubicacionkey)
+              .collection('subUbicaciones');
+          _subUbicaciones = await getLocation(collection2);
+          if (kDebugMode) {
+            print(['Nuevas ubicaciones', _subUbicaciones!.length]);
+          }
+          if (_subUbicaciones!.isNotEmpty) {
+            _subUbicacion = _subUbicaciones![0].nombre;
+          }
+          if (kDebugMode) {
+            print(['Nuevas _subUbicaciones', _subUbicaciones!.length]);
+          }
+        }
+        break;
+      default:
+    }
+  }
+
+  getImage() async {
+    XFile? cameraFile;
+    if (kDebugMode) {
+      print('Pressed');
+    }
+    cameraFile = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (kDebugMode) {
+      print(cameraFile!.path);
+    }
+    _image = await cameraFile!.readAsBytes();
+    setState(() {
+      _image = _image;
+      articulos![widget.articuloIndex].imagen = cameraFile!.path;
+      cameraFile = cameraFile;
+    });
   }
 
   @override
@@ -122,39 +228,50 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Center(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.blueGrey.shade50,
-                          borderRadius: BorderRadius.circular(6),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[400]!.withOpacity(0.56),
-                              offset: const Offset(0.0, 1.0),
-                              blurRadius: 1.0,
-                              // spreadRadius: 1.0,
-                            ),
-                          ],
-                        ),
-                        child: (articulos![widget.articuloIndex].imagen != null)
-                            ? (articulos![widget.articuloIndex].imagen!.contains('shapes'))
-                                ? Image.asset(
-                                    'assets/shapes.png',
-                                    width: width * 0.9,
-                                    fit: BoxFit.cover,
-                                    // height: 100,
-                                  )
-                                : Image.network(
-                                    articulos![widget.articuloIndex].imagen!,
-                                    fit: BoxFit.cover,
-                                    width: width * 0.9,
-                                  )
-                            : Image.asset(
-                                'assets/shapes.png',
-                                width: width * 0.9,
-                                fit: BoxFit.cover,
-                                // height: 100,
+                      child: GestureDetector(
+                        onTap: () async {
+                          await getImage();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey.shade50,
+                            borderRadius: BorderRadius.circular(6),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey[400]!.withOpacity(0.56),
+                                offset: const Offset(0.0, 1.0),
+                                blurRadius: 1.0,
+                                // spreadRadius: 1.0,
                               ),
-                        // const Placeholder(),
+                            ],
+                          ),
+                          child: (_image != null)
+                              ? (_image.contains('shapes'))
+                                  ? Image.asset(
+                                      'assets/shapes.png',
+                                      width: width * 0.9,
+                                      fit: BoxFit.cover,
+                                      // height: 100,
+                                    )
+                                  : (_image.contains('http'))
+                                      ? Image.network(
+                                          _image,
+                                          fit: BoxFit.cover,
+                                          width: width * 0.9,
+                                        )
+                                      : Image.memory(
+                                          _image,
+                                          fit: BoxFit.cover,
+                                          width: width * 0.9,
+                                        )
+                              : Image.asset(
+                                  'assets/shapes.png',
+                                  width: width * 0.9,
+                                  fit: BoxFit.cover,
+                                  // height: 100,
+                                ),
+                          // const Placeholder(),
+                        ),
                       ),
                     ),
                   ],
@@ -202,21 +319,17 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                                       const EdgeInsets.only(left: 20, top: 15, bottom: 0),
                                   isDense: true,
                                 ),
-                                isEmpty: (articulos![widget.articuloIndex].sede!.nombre != null)
-                                    ? (articulos![widget.articuloIndex].sede!.nombre == '')
-                                    : false,
+                                isEmpty: (_sede == '') ? true : false,
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton<String>(
-                                    value: articulos![widget.articuloIndex].sede!.nombre,
+                                    value: _sede,
                                     isDense: true,
-                                    onChanged: (newValue) {
+                                    onChanged: (newValue) async {
                                       setState(() {
                                         _sedekey =
                                             sedes!.where((s) => s.nombre == newValue).first.key;
-                                        _sede = newValue!;
-                                        // articulos![widget.articuloIndex].sede!.nombre = newValue;
-                                        // state.didChange(newValue);
                                       });
+                                      await actualiza(newValue, 'sede');
                                     },
                                     items: sedes!.map((s) => s.nombre).toList().map((String value) {
                                       return DropdownMenuItem<String>(
@@ -259,36 +372,7 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                                     onChanged: (newValue) async {
                                       _subUbicaciones!.clear();
                                       _subUbicacion = '';
-                                      var collection = FirebaseFirestore.instance
-                                          .collection('sedes')
-                                          .doc(_sedekey)
-                                          .collection('ubicaciones');
-                                      List<Location>? ubicaciones = await getLocation(collection);
-                                      var u =
-                                          ubicaciones.where((s) => s.nombre == newValue).toList();
-                                      if (kDebugMode) {
-                                        print(['Nuevas ubicaciones', ubicaciones.length, u.length]);
-                                      }
-                                      if (u.isNotEmpty) {
-                                        _ubicacionkey = u[0].key;
-                                        var collection2 = FirebaseFirestore.instance
-                                            .collection('sedes')
-                                            .doc(_sedekey)
-                                            .collection('ubicaciones')
-                                            .doc(_ubicacionkey)
-                                            .collection('subUbicaciones');
-                                        _subUbicaciones = await getLocation(collection2);
-                                        if (kDebugMode) {
-                                          print(['Nuevas ubicaciones', _subUbicaciones!.length]);
-                                        }
-                                        if (_subUbicaciones!.isNotEmpty) {
-                                          _subUbicacion = _subUbicaciones![0].nombre;
-                                        }
-                                        if (kDebugMode) {
-                                          print(
-                                              ['Nuevas _subUbicaciones', _subUbicaciones!.length]);
-                                        }
-                                      }
+                                      await actualiza(newValue, 'ubicacion');
                                       setState(() {
                                         _subUbicaciones = _subUbicaciones;
                                         _subUbicacion = _subUbicacion;
@@ -304,7 +388,7 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                                         // state.didChange(newValue);
                                       });
                                     },
-                                    items: ubicaciones!
+                                    items: _ubicaciones!
                                         .map((s) => s.nombre)
                                         .toList()
                                         .map((String value) {
@@ -328,7 +412,6 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                         : const LinearProgressIndicator(),
                   ),
                 ),
-                // (_subUbicaciones!.isNotEmpty)?
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: SizedBox(
@@ -385,7 +468,6 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                         : const LinearProgressIndicator(),
                   ),
                 ),
-                // : const SizedBox(),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: SizedBox(
@@ -452,7 +534,9 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                           dateTextStyle: const TextStyle(
                             fontSize: 18,
                           ),
-                          initialValue: DateFormat('dd/M/yyyy', 'es').parse(articulo!.creacion!),
+                          initialValue: (articulo!.creacion == 'No tiene')
+                              ? null
+                              : DateFormat('dd/M/yyyy', 'es').parse(articulo!.creacion!),
                           dateFormat: DateFormat('EE dd MMM yyyy hh:mm a', 'es'),
                           firstDate: DateTime.now().add(const Duration(days: -45)),
                           lastDate: DateTime.now().add(const Duration(days: 0)),
@@ -484,7 +568,7 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         DateTimeFormField(
-                          enabled: false,
+                          enabled: (articulo!.fechaEtiqueta == 'No tiene') ? true : false,
                           decoration: InputDecoration(
                             hintStyle: const TextStyle(color: Colors.black45),
                             errorStyle: const TextStyle(color: Colors.redAccent),
@@ -498,8 +582,9 @@ class ViewArticuloPageState extends State<ViewArticuloPage> {
                           dateTextStyle: const TextStyle(
                             fontSize: 18,
                           ),
-                          initialValue:
-                              DateFormat('dd/M/yyyy', 'es').parse(articulo!.fechaEtiqueta!),
+                          initialValue: (articulo!.fechaEtiqueta == 'No tiene')
+                              ? null
+                              : DateFormat('dd/M/yyyy', 'es').parse(articulo!.fechaEtiqueta!),
                           dateFormat: DateFormat('EE dd MMM yyyy hh:mm a', 'es'),
                           firstDate: DateTime.now().add(const Duration(days: -45)),
                           lastDate: DateTime.now().add(const Duration(days: 0)),

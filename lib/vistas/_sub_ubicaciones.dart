@@ -31,7 +31,7 @@ class SubUbicacionesPageState extends State<SubUbicacionesPage> {
   String subtitulo = '';
 
   init() async {
-    subUbicaciones ??= [];
+    subUbicaciones = [];
     subUbicaciones = await getLocation(widget.locationCollection);
     // await storage.put('sedes', sedes);
     contadorSubUbicacionesBarkey.currentState!.getContadores(subUbicaciones);

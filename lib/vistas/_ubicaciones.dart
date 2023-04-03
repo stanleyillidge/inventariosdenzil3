@@ -28,8 +28,7 @@ class UbicacionesPageState extends State<UbicacionesPage> {
   final double _locationsCardsWidt = 350;
 
   init() async {
-    ubicaciones ??= [];
-    ubicaciones!.addAll(await getLocation(widget.locationCollection));
+    ubicaciones = await getLocation(widget.locationCollection);
     // await storage.put('sedes', sedes);
     contadorUbicacionesBarkey.currentState!.getContadores(ubicaciones);
     setState(() {

@@ -22,11 +22,7 @@ class SedesPageState extends State<SedesPage> {
   final double _locationsCardsWidt = 350;
 
   init() async {
-    // sedes = [];
-    // ubicaciones = [];
-    // subUbicaciones = [];
-    sedes ??= [];
-    sedes!.addAll(await getLocation(sedesCollection));
+    sedes = await getLocation(sedesCollection);
     setState(() {
       sedes = sedes;
       isDataLoad = true;
